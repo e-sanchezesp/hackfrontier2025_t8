@@ -134,7 +134,7 @@ export function RecordingsList({ recordings, onDeleteRecording }: RecordingsList
   if (recordings.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Volume2 size={48} color="#9CA3AF" />
+        <Volume2 size={48} color="rgba(255, 255, 255, 0.6)" />
         <Text style={styles.emptyText}>No recordings yet</Text>
         <Text style={styles.emptySubtext}>Your recordings will appear here</Text>
       </View>
@@ -199,44 +199,47 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#6B7280',
+    fontFamily: 'Inter-SemiBold',
+    color: 'rgba(255, 255, 255, 0.9)',
     marginTop: 16,
   },
   emptySubtext: {
     fontSize: 14,
-    color: '#9CA3AF',
+    fontFamily: 'Inter-Regular',
+    color: 'rgba(255, 255, 255, 0.7)',
     marginTop: 4,
   },
   recordingItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
   recordingInfo: {
     flex: 1,
   },
   recordingName: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#1F2937',
     marginBottom: 4,
   },
   recordingDate: {
     fontSize: 14,
+    fontFamily: 'Inter-Regular',
     color: '#6B7280',
     marginBottom: 2,
   },
   recordingDuration: {
     fontSize: 12,
+    fontFamily: 'Inter-Regular',
     color: '#9CA3AF',
   },
   recordingActions: {
@@ -254,7 +257,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#059669',
   },
   shareButton: {
-    backgroundColor: '#2563EB',
+    backgroundColor: '#667eea',
   },
   deleteButton: {
     backgroundColor: '#DC2626',

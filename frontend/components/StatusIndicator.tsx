@@ -46,11 +46,11 @@ export function StatusIndicator({ isActive, type }: StatusIndicatorProps) {
   const getIndicatorColor = () => {
     switch (type) {
       case 'listening':
-        return '#059669';
+        return '#FFFFFF';
       case 'processing':
         return '#F59E0B';
       default:
-        return '#6B7280';
+        return '#667eea';
     }
   };
 

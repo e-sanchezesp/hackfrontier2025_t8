@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function IndexScreen() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -24,9 +25,12 @@ export default function IndexScreen() {
   }, [isAuthenticated, isLoading, user]);
 
   return (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" color="#667eea" />
-    </View>
+    <LinearGradient
+      colors={['#667eea', '#764ba2']}
+      style={styles.container}
+    >
+      <ActivityIndicator size="large" color="#FFFFFF" />
+    </LinearGradient>
   );
 }
 
@@ -35,6 +39,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
   },
 });

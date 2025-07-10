@@ -23,7 +23,7 @@ export function AlarmCard({ alarm }: AlarmCardProps) {
     <View style={styles.card}>
       <View style={styles.content}>
         <View style={styles.iconContainer}>
-          <Clock size={20} color="#2563EB" />
+          <Clock size={20} color="#667eea" />
         </View>
         
         <View style={styles.info}>
@@ -37,7 +37,7 @@ export function AlarmCard({ alarm }: AlarmCardProps) {
         
         <Switch
           trackColor={{ false: '#D1D5DB', true: '#93C5FD' }}
-          thumbColor={isEnabled ? '#2563EB' : '#F3F4F6'}
+          thumbColor={isEnabled ? '#667eea' : '#F3F4F6'}
           ios_backgroundColor="#D1D5DB"
           onValueChange={toggleSwitch}
           value={isEnabled}
@@ -50,14 +50,14 @@ export function AlarmCard({ alarm }: AlarmCardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
   content: {
     flexDirection: 'row',
@@ -65,10 +65,10 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#EEF2FF',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#F9FAFB',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -77,14 +77,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#1F2937',
     marginBottom: 4,
   },
   time: {
     fontSize: 18,
-    fontWeight: '700',
-    color: '#2563EB',
+    fontFamily: 'Inter-Bold',
+    color: '#667eea',
     marginBottom: 4,
   },
   frequencyContainer: {
@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
   },
   frequency: {
     fontSize: 12,
+    fontFamily: 'Inter-Regular',
     color: '#6B7280',
   },
 });

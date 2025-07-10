@@ -155,12 +155,12 @@ export function VoiceButton({
 
   const getButtonIcon = () => {
     if (recordingUri) {
-      return isPlaying ? <Pause size={32} color="#FFFFFF" /> : <Play size={32} color="#FFFFFF" />;
+      return isPlaying ? <Pause size={32} color="#FFFFFF" /> : <Play size={32} color="#667eea" />;
     }
     if (recording) {
       return <Square size={32} color="#FFFFFF" />;
     }
-    return isListening ? <MicOff size={32} color="#FFFFFF" /> : <Mic size={32} color="#FFFFFF" />;
+    return isListening ? <MicOff size={32} color="#FFFFFF" /> : <Mic size={32} color="#667eea" />;
   };
 
   const getButtonText = () => {
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#667eea',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -249,11 +249,11 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   voiceButtonActive: {
-    backgroundColor: '#059669',
+    backgroundColor: '#10B981',
     transform: [{ scale: 1.1 }],
   },
   voiceButtonProcessing: {
-    backgroundColor: '#F59E0B',
+    backgroundColor: '#F97316',
   },
   controlsContainer: {
     marginTop: 20,
@@ -261,8 +261,8 @@ const styles = StyleSheet.create({
   },
   recordingText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#059669',
+    fontFamily: 'Inter-SemiBold',
+    color: '#10B981',
     marginBottom: 12,
   },
   controlButtons: {
@@ -273,12 +273,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: '#2563EB',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   controlButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
   },
   deleteButton: {
     backgroundColor: '#DC2626',
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     height: 160,
     borderRadius: 80,
     borderWidth: 2,
-    borderColor: 'rgba(102, 126, 234, 0.3)',
+    borderColor: 'rgba(255, 255, 255, 0.3)',
     opacity: 0,
   },
 });

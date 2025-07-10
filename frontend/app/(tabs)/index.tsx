@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Mic, MicOff, LogOut, Phone } from 'lucide-react-native';
+import { Mic, MicOff, LogOut, Phone, Heart, AlertTriangle } from 'lucide-react-native';
 import { StatusIndicator } from '@/components/StatusIndicator';
 import { VoiceButton } from '@/components/VoiceButton';
 import { RecordingsList } from '@/components/RecordingsList';
@@ -95,8 +95,8 @@ export default function ElderlyPersonScreen() {
 
   const getStatusColor = () => {
     if (isProcessing) return '#F59E0B';
-    if (isListening) return '#059669';
-    return '#6B7280';
+    if (isListening) return '#FFFFFF';
+    return '#FFFFFF';
   };
 
   const getGreeting = () => {
@@ -109,7 +109,7 @@ export default function ElderlyPersonScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['#F0F9FF', '#E0F2FE', '#F8FAFC']}
+        colors={['#667eea', '#764ba2']}
         style={styles.gradient}
       >
         <ScrollView 
@@ -119,12 +119,15 @@ export default function ElderlyPersonScreen() {
         >
           {/* Header with greeting and logout */}
           <View style={styles.header}>
+            <View style={styles.logoContainer}>
+              <Heart size={32} color="#FFFFFF" strokeWidth={2} />
+            </View>
             <View style={styles.greetingContainer}>
               <Text style={styles.greeting}>{getGreeting()}</Text>
               <Text style={styles.userName}>{user?.name}</Text>
             </View>
             <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-              <LogOut size={24} color="#6B7280" />
+              <LogOut size={24} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
 
@@ -170,7 +173,7 @@ export default function ElderlyPersonScreen() {
           {/* Quick action buttons */}
           <View style={styles.quickActions}>
             <TouchableOpacity style={styles.quickActionButton} onPress={handleFamilyCall}>
-              <Phone size={28} color="#FFFFFF" />
+              <Phone size={28} color="#667eea" />
               <Text style={styles.quickActionText}>Call Family</Text>
             </TouchableOpacity>
           </View>
@@ -187,7 +190,7 @@ export default function ElderlyPersonScreen() {
 
         {/* Emergency button - always visible */}
         <TouchableOpacity style={styles.emergencyButton} onPress={handleEmergencyCall}>
-          <Text style={styles.emergencyText}>🚨</Text>
+          <AlertTriangle size={28} color="#FFFFFF" />
           <Text style={styles.emergencyLabel}>Emergency</Text>
         </TouchableOpacity>
       </LinearGradient>
@@ -204,39 +207,46 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+    paddingHorizontal: 24,
     paddingBottom: 120, // Space for emergency button
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingHorizontal: 24,
+    alignItems: 'center',
     paddingTop: 20,
     paddingBottom: 10,
   },
+  logoContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   greetingContainer: {
     flex: 1,
+    alignItems: 'center',
   },
   greeting: {
-    fontSize: 32,
+    fontSize: 24,
     fontFamily: 'Inter-Bold',
-    color: '#1F2937',
+    color: '#FFFFFF',
     marginBottom: 4,
   },
   userName: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'Inter-Regular',
-    color: '#6B7280',
+    color: 'rgba(255, 255, 255, 0.8)',
   },
   logoutButton: {
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   mainContent: {
     flex: 1,
@@ -259,19 +269,19 @@ const styles = StyleSheet.create({
   },
   instructionsContainer: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: 20,
+    padding: 24,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
     maxWidth: width * 0.85,
   },
   instructionText: {
     fontSize: 18,
     fontFamily: 'Inter-SemiBold',
-    color: '#374151',
+    color: '#1F2937',
     textAlign: 'center',
     marginBottom: 16,
   },
@@ -293,7 +303,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#2563EB',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     paddingVertical: 16,
     paddingHorizontal: 24,
@@ -307,7 +317,7 @@ const styles = StyleSheet.create({
   quickActionText: {
     fontSize: 18,
     fontFamily: 'Inter-SemiBold',
-    color: '#FFFFFF',
+    color: '#667eea',
   },
   recordingsSection: {
     paddingHorizontal: 24,
@@ -317,7 +327,7 @@ const styles = StyleSheet.create({
   recordingsTitle: {
     fontSize: 20,
     fontFamily: 'Inter-Bold',
-    color: '#1F2937',
+    color: '#FFFFFF',
     marginBottom: 16,
   },
   emergencyButton: {
@@ -335,10 +345,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 12,
     elevation: 10,
-  },
-  emergencyText: {
-    fontSize: 28,
-    marginBottom: 2,
+    gap: 4,
   },
   emergencyLabel: {
     fontSize: 10,

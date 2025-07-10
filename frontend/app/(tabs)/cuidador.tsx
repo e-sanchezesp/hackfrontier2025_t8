@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Calendar, Clock, Heart, Brain, Bell, Plus } from 'lucide-react-native';
+import { Calendar, Clock, Heart, Brain, Bell, Plus, LogOut, Users } from 'lucide-react-native';
 import { ReportCard } from '@/components/ReportCard';
 import { AlarmCard } from '@/components/AlarmCard';
-import { Header } from '@/components/Header';
+import { useAuth } from '@/contexts/AuthContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 // Sample data
 const reports = [
@@ -57,57 +58,78 @@ const alarms = [
 
 export default function CaregiverScreen() {
   const [selectedTab, setSelectedTab] = useState<'reports' | 'alarms'>('reports');
+  const { logout, user } = useAuth();
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Caregiver Panel" />
-      
-      {/* Tabs */}
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity
-          style={[styles.tab, selectedTab === 'reports' && styles.activeTab]}
-          onPress={() => setSelectedTab('reports')}
-        >
-          <Calendar size={20} color={selectedTab === 'reports' ? '#2563EB' : '#6B7280'} />
-          <Text style={[styles.tabText, selectedTab === 'reports' && styles.activeTabText]}>
-            Reports
-          </Text>
-        </TouchableOpacity>
+      <LinearGradient
+        colors={['#667eea', '#764ba2']}
+        style={styles.gradient}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <Users size={32} color="#FFFFFF" strokeWidth={2} />
+          </View>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Caregiver Panel</Text>
+            <Text style={styles.subtitle}>Elder Care</Text>
+            {user && (
+              <Text style={styles.userName}>Hello, {user.name}</Text>
+            )}
+          </View>
+          <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+            <LogOut size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
         
-        <TouchableOpacity
-          style={[styles.tab, selectedTab === 'alarms' && styles.activeTab]}
-          onPress={() => setSelectedTab('alarms')}
-        >
-          <Bell size={20} color={selectedTab === 'alarms' ? '#2563EB' : '#6B7280'} />
-          <Text style={[styles.tabText, selectedTab === 'alarms' && styles.activeTabText]}>
-            Alarms
-          </Text>
-        </TouchableOpacity>
-      </View>
+        {/* Tabs */}
+        <View style={styles.tabsContainer}>
+          <TouchableOpacity
+            style={[styles.tab, selectedTab === 'reports' && styles.activeTab]}
+            onPress={() => setSelectedTab('reports')}
+          >
+            <Calendar size={20} color={selectedTab === 'reports' ? '#667eea' : '#FFFFFF'} />
+            <Text style={[styles.tabText, selectedTab === 'reports' && styles.activeTabText]}>
+              Reports
+            </Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={[styles.tab, selectedTab === 'alarms' && styles.activeTab]}
+            onPress={() => setSelectedTab('alarms')}
+          >
+            <Bell size={20} color={selectedTab === 'alarms' ? '#667eea' : '#FFFFFF'} />
+            <Text style={[styles.tabText, selectedTab === 'alarms' && styles.activeTabText]}>
+              Alarms
+            </Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* Content */}
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {selectedTab === 'reports' ? (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Daily Reports</Text>
-            {reports.map((report) => (
-              <ReportCard key={report.id} report={report} />
-            ))}
-          </View>
-        ) : (
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Reminders</Text>
-              <TouchableOpacity style={styles.addButton}>
-                <Plus size={20} color="#FFFFFF" />
-              </TouchableOpacity>
+        {/* Content */}
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          {selectedTab === 'reports' ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Daily Reports</Text>
+              {reports.map((report) => (
+                <ReportCard key={report.id} report={report} />
+              ))}
             </View>
-            {alarms.map((alarm) => (
-              <AlarmCard key={alarm.id} alarm={alarm} />
-            ))}
-          </View>
-        )}
-      </ScrollView>
+          ) : (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Reminders</Text>
+                <TouchableOpacity style={styles.addButton}>
+                  <Plus size={20} color="#FFFFFF" />
+                </TouchableOpacity>
+              </View>
+              {alarms.map((alarm) => (
+                <AlarmCard key={alarm.id} alarm={alarm} />
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      </LinearGradient>
     </SafeAreaView>
   );
 }
@@ -115,13 +137,60 @@ export default function CaregiverScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+  },
+  gradient: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 10,
+  },
+  logoContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontFamily: 'Inter-Bold',
+    color: '#FFFFFF',
+  },
+  subtitle: {
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: 'rgba(255, 255, 255, 0.8)',
+    marginTop: 4,
+  },
+  userName: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: 'rgba(255, 255, 255, 0.8)',
+    marginTop: 4,
+  },
+  logoutButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   tabsContainer: {
     flexDirection: 'row',
-    marginHorizontal: 20,
-    marginTop: 10,
-    backgroundColor: '#FFFFFF',
+    marginHorizontal: 24,
+    marginTop: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 12,
     padding: 6,
     shadowColor: '#000',
@@ -141,22 +210,22 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   activeTab: {
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#FFFFFF',
   },
   tabText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#6B7280',
+    fontFamily: 'Inter-SemiBold',
+    color: '#FFFFFF',
   },
   activeTabText: {
-    color: '#2563EB',
+    color: '#667eea',
   },
   content: {
     flex: 1,
     marginTop: 20,
   },
   section: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -166,11 +235,11 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '700',
-    color: '#1F2937',
+    fontFamily: 'Inter-Bold',
+    color: '#FFFFFF',
   },
   addButton: {
-    backgroundColor: '#2563EB',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     width: 40,
     height: 40,
     borderRadius: 20,

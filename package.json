@@ -22,7 +22,15 @@
     "frontend",
     "backend"
   ],
-  "keywords": ["monorepo", "react-native", "express", "api"],
+  "keywords": [
+    "monorepo",
+    "react-native",
+    "express",
+    "api"
+  ],
   "author": "Your Name",
-  "license": "MIT"
-} 
+  "license": "MIT",
+  "dependencies": {
+    "expo-speech": "^13.1.7"
+  }
+}

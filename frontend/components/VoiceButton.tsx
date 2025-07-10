@@ -4,6 +4,7 @@ import { Mic, MicOff, Play, Pause, Square } from 'lucide-react-native';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { Audio } from 'expo-av';
+import { runTranscriptionFlow } from './TranscriptionFlowLogic';
 
 interface VoiceButtonProps {
   isListening: boolean;
@@ -16,8 +17,17 @@ export function VoiceButton({
   isListening, 
   isProcessing, 
   onPress, 
-  onRecordingComplete 
-}: VoiceButtonProps) {
+  onRecordingComplete,
+  setStatus,
+  setTranscript,
+  setUser,
+  setN8nResponse
+}: VoiceButtonProps & {
+  setStatus?: (msg: string) => void,
+  setTranscript?: (txt: string) => void,
+  setUser?: (user: any) => void,
+  setN8nResponse?: (resp: any) => void,
+}) {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -113,6 +123,10 @@ export function VoiceButton({
       if (uri) {
         setRecordingUri(uri);
         onRecordingComplete?.(uri);
+        // Llama automáticamente al flujo de transcripción si se pasan los setters
+        if (setStatus && setTranscript && setUser && setN8nResponse) {
+          runTranscriptionFlow(uri, setStatus, setTranscript, setUser, setN8nResponse);
+        }
       }
     } catch (error) {
       console.error('Failed to stop recording', error);

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Linking, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Linking, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mic, MicOff, LogOut, Phone, Heart, AlertTriangle } from 'lucide-react-native';
 
@@ -7,6 +7,8 @@ import { VoiceButton } from '@/components/VoiceButton';
 import { RecordingsList } from '@/components/RecordingsList';
 import { useAuth } from '@/contexts/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Speech from 'expo-speech';
+import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,7 +24,26 @@ export default function ElderlyPersonScreen() {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [recordings, setRecordings] = useState<Recording[]>([]);
-  const { logout, user } = useAuth();
+  const [status, setStatus] = useState('');
+  const [transcript, setTranscript] = useState('');
+  const [user, setUser] = useState<any>(null);
+  const [n8nResponse, setN8nResponse] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [lastN8nMessage, setLastN8nMessage] = useState<string | null>(null);
+  const { logout, user: authUser } = useAuth();
+
+  useEffect(() => {
+    console.log('[Audio] n8nResponse cambió:', n8nResponse);
+    if (n8nResponse && typeof n8nResponse === 'object' && n8nResponse.mensaje) {
+      console.log('[Audio] Reproduciendo mensaje:', n8nResponse.mensaje);
+      Speech.speak(n8nResponse.mensaje, { language: 'es-MX' });
+    } else if (n8nResponse && typeof n8nResponse === 'string') {
+      console.log('[Audio] Reproduciendo string:', n8nResponse);
+      Speech.speak(n8nResponse, { language: 'es-MX' });
+    } else {
+      console.log('[Audio] No se reproduce, formato no válido');
+    }
+  }, [n8nResponse]);
 
   const handleVoicePress = () => {
     if (isListening) {
@@ -124,7 +145,7 @@ export default function ElderlyPersonScreen() {
             </View>
             <View style={styles.greetingContainer}>
               <Text style={styles.greeting}>{getGreeting()}</Text>
-              <Text style={styles.userName}>{user?.name}</Text>
+              <Text style={styles.userName}>{authUser?.name}</Text>
             </View>
             <TouchableOpacity style={styles.logoutButton} onPress={logout}>
               <LogOut size={24} color="#FFFFFF" />
@@ -139,11 +160,27 @@ export default function ElderlyPersonScreen() {
               isProcessing={isProcessing}
               onPress={handleVoicePress}
               onRecordingComplete={handleRecordingComplete}
+              setStatus={setStatus}
+              setTranscript={setTranscript}
+              setUser={setUser}
+              setN8nResponse={setN8nResponse}
+              setLoading={setLoading}
             />
             
             {/* Status text */}
             <View style={styles.statusContainer}>
-              <Text style={[styles.statusText, { color: getStatusColor() }]}>{getStatusText()}</Text>
+              <Text style={[styles.statusText, { color: getStatusColor() }]}> 
+                {getStatusText()}
+              </Text>
+              {/* Mostrar resultado de n8n si existe (debug) */}
+              {n8nResponse !== null && n8nResponse !== undefined && (
+                <View style={{ marginTop: 20, backgroundColor: '#F1F5F9', borderRadius: 12, padding: 16 }}>
+                  <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#2563EB', marginBottom: 8 }}>Resultado del análisis (debug):</Text>
+                  <Text style={{ fontSize: 16, color: '#1E293B' }}>
+                    {JSON.stringify(n8nResponse, null, 2)}
+                  </Text>
+                </View>
+              )}
               {/* Additional instructions */}
               {!isListening && !isProcessing && (
                 <View style={styles.instructionsContainer}>
@@ -185,6 +222,7 @@ export default function ElderlyPersonScreen() {
           <Text style={styles.emergencyLabel}>Emergency</Text>
         </TouchableOpacity>
       </LinearGradient>
+      {loading && <ActivityIndicator size="large" color="#2563EB" style={{ position: 'absolute', bottom: 100 }} />}
     </SafeAreaView>
   );
 }

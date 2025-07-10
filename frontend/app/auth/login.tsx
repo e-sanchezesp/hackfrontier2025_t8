@@ -109,7 +109,7 @@ export default function LoginScreen() {
               <View style={styles.logoContainer}>
                 <Heart size={32} color="#FFFFFF" strokeWidth={2} />
               </View>
-              <Text style={styles.appTitle}>CUIDA+</Text>
+              <Text style={styles.appTitle}>Elder Care</Text>
             </View>
 
             {/* Role Info */}

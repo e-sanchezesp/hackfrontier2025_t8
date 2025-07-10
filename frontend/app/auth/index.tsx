@@ -31,9 +31,9 @@ export default function RoleSelectionScreen() {
             <View style={styles.logoContainer}>
               <Heart size={48} color="#FFFFFF" strokeWidth={2} />
             </View>
-            <Text style={styles.title}>CUIDA+</Text>
+            <Text style={styles.title}>Elder Care</Text>
             <Text style={styles.subtitle}>
-              Care and wellness for elderly people
+              Comprehensive care and wellness for elderly people
             </Text>
           </View>
 

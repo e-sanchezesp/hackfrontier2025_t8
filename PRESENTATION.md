@@ -1,10 +1,10 @@
-# CUIDA+ - Elderly Care Assistant App
+# Elder Care - Comprehensive Care Assistant App
 ## Presentation Guide
 
 ---
 
 ## 🎯 **APP OVERVIEW**
-**CUIDA+** is a comprehensive mobile application designed to bridge the gap between elderly individuals and their caregivers. The app provides a dual-interface system that caters to both elderly users and their caregivers, ensuring seamless communication and monitoring.
+**Elder Care** is a comprehensive mobile application designed to bridge the gap between elderly individuals and their caregivers. The app provides a dual-interface system that caters to both elderly users and their caregivers, ensuring seamless communication and monitoring.
 
 **Key Value Proposition:**
 - Personalized care assistance for elderly individuals
@@ -228,9 +228,9 @@
 
 ---
 
-## 🎯 **CONCLUSION**
+## �� **CONCLUSION**
 
-**CUIDA+** represents a comprehensive solution for elderly care that prioritizes:
+**Elder Care** represents a comprehensive solution for elderly care that prioritizes:
 - **User Safety**: Emergency features and monitoring
 - **Ease of Use**: Intuitive, accessible interface design
 - **Privacy Protection**: Local data storage and minimal tracking
@@ -241,4 +241,4 @@ The app successfully bridges the gap between independence and support, empowerin
 
 ---
 
-*This presentation guide covers all aspects of the CUIDA+ app, from technical implementation to user experience and future development plans.* 
+*This presentation guide covers all aspects of the Elder Care app, from technical implementation to user experience and future development plans.* 

@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.get('/', (req, res) => {
-  res.json({ message: 'Hackfrontier API is running!' });
+  res.json({ message: 'Elder Care API is running!' });
 });
 
 // API Routes

@@ -1,11 +1,11 @@
-# Hackfrontier Project
+# Elder Care
 
-A full-stack application with React Native frontend and Express.js backend.
+A comprehensive care and wellness application for elderly people with React Native frontend and Express.js backend.
 
 ## Project Structure
 
 ```
-hackfrontier2025_t8/
+elder-care/
 ├── frontend/                 # React Native (Expo) application
 │   ├── app/                 # Expo Router pages
 │   ├── components/          # Reusable React components
@@ -148,7 +148,7 @@ Create a `.env` file in the backend directory with:
 ```env
 PORT=3000
 NODE_ENV=development
-MONGODB_URI=mongodb://localhost:27017/hackfrontier
+MONGODB_URI=mongodb://localhost:27017/elder-care
 JWT_SECRET=your-super-secret-jwt-key-here
 JWT_EXPIRE=24h
 CORS_ORIGIN=http://localhost:3000

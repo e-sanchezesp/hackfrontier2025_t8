@@ -15,7 +15,7 @@ export function Header({ title, showLogout = true }: HeaderProps) {
     <View style={styles.header}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>CUIDA+</Text>
+        <Text style={styles.subtitle}>Elder Care</Text>
         {user && (
           <Text style={styles.userName}>Hola, {user.name}</Text>
         )}

@@ -33,10 +33,15 @@ export default function ElderlyPersonScreen() {
   const { logout, user: authUser } = useAuth();
 
   useEffect(() => {
+    console.log('[Audio] n8nResponse cambió:', n8nResponse);
     if (n8nResponse && typeof n8nResponse === 'object' && n8nResponse.mensaje) {
+      console.log('[Audio] Reproduciendo mensaje:', n8nResponse.mensaje);
       Speech.speak(n8nResponse.mensaje, { language: 'es-MX' });
     } else if (n8nResponse && typeof n8nResponse === 'string') {
+      console.log('[Audio] Reproduciendo string:', n8nResponse);
       Speech.speak(n8nResponse, { language: 'es-MX' });
+    } else {
+      console.log('[Audio] No se reproduce, formato no válido');
     }
   }, [n8nResponse]);
 

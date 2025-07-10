@@ -9,14 +9,15 @@ export default function IndexScreen() {
   useEffect(() => {
     if (!isLoading) {
       if (isAuthenticated && user) {
-        // Redirigir según el rol del usuario
-        if (user.role === 'cuidador') {
+        // Redirect based on user role
+        if (user.role === 'caregiver') {
           router.replace('/(tabs)/cuidador');
         } else {
-          router.replace('/(tabs)/');
+          // For elderly person, redirect to the main screen
+          router.replace('/(tabs)');
         }
       } else {
-        // No autenticado, ir a selección de rol
+        // Not authenticated, go to role selection
         router.replace('/auth');
       }
     }

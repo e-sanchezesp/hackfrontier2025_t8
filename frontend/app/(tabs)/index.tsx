@@ -4,15 +4,58 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mic, MicOff, LogOut, Phone } from 'lucide-react-native';
 import { StatusIndicator } from '@/components/StatusIndicator';
 import { VoiceButton } from '@/components/VoiceButton';
+import { RecordingsList } from '@/components/RecordingsList';
 import { useAuth } from '@/contexts/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
+interface Recording {
+  id: string;
+  uri: string;
+  name: string;
+  duration?: number;
+  date: Date;
+}
+
 export default function ElderlyPersonScreen() {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [recordings, setRecordings] = useState<Recording[]>([]);
   const { logout, user } = useAuth();
+
+  const handleVoicePress = () => {
+    if (isListening) {
+      // Stop recording
+      setIsListening(false);
+      setIsProcessing(true);
+      
+      // Simulate processing
+      setTimeout(() => {
+        setIsProcessing(false);
+      }, 2000);
+    } else {
+      // Start recording
+      setIsListening(true);
+    }
+  };
+
+  const handleRecordingComplete = (recordingUri: string) => {
+    const newRecording: Recording = {
+      id: Date.now().toString(),
+      uri: recordingUri,
+      name: `Recording ${recordings.length + 1}`,
+      date: new Date(),
+    };
+    
+    setRecordings(prev => [newRecording, ...prev]);
+    setIsListening(false);
+    setIsProcessing(false);
+  };
+
+  const handleDeleteRecording = (id: string) => {
+    setRecordings(prev => prev.filter(recording => recording.id !== id));
+  };
 
   const handleEmergencyCall = async () => {
     try {
@@ -41,22 +84,6 @@ export default function ElderlyPersonScreen() {
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to call family');
-    }
-  };
-
-  const handleVoicePress = () => {
-    if (isListening) {
-      // Stop recording
-      setIsListening(false);
-      setIsProcessing(true);
-      
-      // Simulate processing
-      setTimeout(() => {
-        setIsProcessing(false);
-      }, 2000);
-    } else {
-      // Start recording
-      setIsListening(true);
     }
   };
 
@@ -114,6 +141,7 @@ export default function ElderlyPersonScreen() {
               isListening={isListening}
               isProcessing={isProcessing}
               onPress={handleVoicePress}
+              onRecordingComplete={handleRecordingComplete}
             />
             
             {/* Status text */}
@@ -145,6 +173,15 @@ export default function ElderlyPersonScreen() {
               <Phone size={28} color="#FFFFFF" />
               <Text style={styles.quickActionText}>Call Family</Text>
             </TouchableOpacity>
+          </View>
+
+          {/* Recordings Section */}
+          <View style={styles.recordingsSection}>
+            <Text style={styles.recordingsTitle}>Your Recordings</Text>
+            <RecordingsList 
+              recordings={recordings}
+              onDeleteRecording={handleDeleteRecording}
+            />
           </View>
         </ScrollView>
 
@@ -206,7 +243,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
-    minHeight: height * 0.6,
+    minHeight: height * 0.4,
   },
   statusContainer: {
     alignItems: 'center',
@@ -271,6 +308,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Inter-SemiBold',
     color: '#FFFFFF',
+  },
+  recordingsSection: {
+    paddingHorizontal: 24,
+    paddingTop: 30,
+    paddingBottom: 20,
+  },
+  recordingsTitle: {
+    fontSize: 20,
+    fontFamily: 'Inter-Bold',
+    color: '#1F2937',
+    marginBottom: 16,
   },
   emergencyButton: {
     position: 'absolute',

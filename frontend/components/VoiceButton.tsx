@@ -1,157 +1,230 @@
-import React, { useRef, useEffect } from 'react';
-import { TouchableOpacity, StyleSheet, Animated, View } from 'react-native';
-import { Mic, MicOff, Loader } from 'lucide-react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TouchableOpacity, StyleSheet, Text, Alert } from 'react-native';
+import { Mic, MicOff, Play, Pause, Square } from 'lucide-react-native';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import { Audio } from 'expo-av';
 
 interface VoiceButtonProps {
   isListening: boolean;
   isProcessing: boolean;
   onPress: () => void;
+  onRecordingComplete?: (recordingUri: string) => void;
 }
 
-export function VoiceButton({ isListening, isProcessing, onPress }: VoiceButtonProps) {
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const rotateAnim = useRef(new Animated.Value(0)).current;
+export function VoiceButton({ 
+  isListening, 
+  isProcessing, 
+  onPress, 
+  onRecordingComplete 
+}: VoiceButtonProps) {
+  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [recordingUri, setRecordingUri] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isListening) {
-      // Animación de pulso para escuchando
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(pulseAnim, {
-            toValue: 1.05,
-            duration: 1000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(pulseAnim, {
-            toValue: 1,
-            duration: 1000,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    } else if (isProcessing) {
-      // Animación de rotación para procesando
-      Animated.loop(
-        Animated.timing(rotateAnim, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-        })
-      ).start();
-    } else {
-      // Detener todas las animaciones
-      pulseAnim.setValue(1);
-      rotateAnim.setValue(0);
-    }
-
     return () => {
-      pulseAnim.stopAnimation();
-      rotateAnim.stopAnimation();
+      if (sound) {
+        sound.unloadAsync();
+      }
     };
-  }, [isListening, isProcessing]);
+  }, [sound]);
 
-  const handlePress = () => {
-    // Animación de press
-    Animated.sequence([
-      Animated.timing(scaleAnim, {
-        toValue: 0.95,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start();
+  const startRecording = async () => {
+    try {
+      // Request permissions
+      const { status } = await Audio.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission needed', 'Please grant microphone permissions to record audio.');
+        return;
+      }
 
+      // Configure audio mode
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      // Start recording
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      setRecording(recording);
+    } catch (error) {
+      console.error('Failed to start recording', error);
+      Alert.alert('Error', 'Failed to start recording');
+    }
+  };
+
+  const stopRecording = async () => {
+    if (!recording) return;
+
+    try {
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      setRecording(null);
+      
+      if (uri) {
+        setRecordingUri(uri);
+        onRecordingComplete?.(uri);
+      }
+    } catch (error) {
+      console.error('Failed to stop recording', error);
+      Alert.alert('Error', 'Failed to stop recording');
+    }
+  };
+
+  const playRecording = async () => {
+    if (!recordingUri) return;
+
+    try {
+      if (sound) {
+        if (isPlaying) {
+          await sound.pauseAsync();
+          setIsPlaying(false);
+        } else {
+          await sound.playAsync();
+          setIsPlaying(true);
+        }
+      } else {
+        const { sound: newSound } = await Audio.Sound.createAsync({ uri: recordingUri });
+        setSound(newSound);
+        
+        newSound.setOnPlaybackStatusUpdate((status) => {
+          if (status.isLoaded && status.didJustFinish) {
+            setIsPlaying(false);
+          }
+        });
+        
+        await newSound.playAsync();
+        setIsPlaying(true);
+      }
+    } catch (error) {
+      console.error('Failed to play recording', error);
+      Alert.alert('Error', 'Failed to play recording');
+    }
+  };
+
+  const deleteRecording = async () => {
+    if (!recordingUri) return;
+
+    try {
+      await FileSystem.deleteAsync(recordingUri);
+      setRecordingUri(null);
+      if (sound) {
+        await sound.unloadAsync();
+        setSound(null);
+      }
+      setIsPlaying(false);
+    } catch (error) {
+      console.error('Failed to delete recording', error);
+      Alert.alert('Error', 'Failed to delete recording');
+    }
+  };
+
+  const shareRecording = async () => {
+    if (!recordingUri) return;
+
+    try {
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (isAvailable) {
+        await Sharing.shareAsync(recordingUri);
+      } else {
+        Alert.alert('Sharing not available', 'Sharing is not available on this device');
+      }
+    } catch (error) {
+      console.error('Failed to share recording', error);
+      Alert.alert('Error', 'Failed to share recording');
+    }
+  };
+
+  const handlePress = async () => {
+    if (recordingUri) {
+      // If we have a recording, play/pause it
+      await playRecording();
+    } else if (recording) {
+      // If we're recording, stop it
+      await stopRecording();
+    } else {
+      // Start recording
+      await startRecording();
+    }
     onPress();
   };
 
-  const getButtonColor = () => {
-    if (isProcessing) return '#F59E0B';
-    if (isListening) return '#059669';
-    return '#2563EB';
+  const getButtonIcon = () => {
+    if (recordingUri) {
+      return isPlaying ? <Pause size={32} color="#FFFFFF" /> : <Play size={32} color="#FFFFFF" />;
+    }
+    if (recording) {
+      return <Square size={32} color="#FFFFFF" />;
+    }
+    return isListening ? <MicOff size={32} color="#FFFFFF" /> : <Mic size={32} color="#FFFFFF" />;
   };
 
-  const getIconColor = () => '#FFFFFF';
-
-  const renderIcon = () => {
-    if (isProcessing) {
-      return (
-        <Animated.View
-          style={{
-            transform: [
-              {
-                rotate: rotateAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ['0deg', '360deg'],
-                }),
-              },
-            ],
-          }}
-        >
-          <Loader size={64} color={getIconColor()} strokeWidth={3} />
-        </Animated.View>
-      );
+  const getButtonText = () => {
+    if (recordingUri) {
+      return isPlaying ? 'Pause' : 'Play';
     }
-    
-    if (isListening) {
-      return <MicOff size={64} color={getIconColor()} strokeWidth={3} />;
+    if (recording) {
+      return 'Stop';
     }
-    
-    return <Mic size={64} color={getIconColor()} strokeWidth={3} />;
+    return isListening ? 'Stop Recording' : 'Start Recording';
   };
 
   return (
     <View style={styles.container}>
-      {/* Ondas de fondo cuando está activo */}
-      {(isListening || isProcessing) && (
-        <>
-          {[0, 1, 2].map((index) => (
-            <Animated.View
+      {/* Main recording button */}
+      <TouchableOpacity
+        style={[
+          styles.voiceButton,
+          (isListening || recording || recordingUri) && styles.voiceButtonActive,
+          isProcessing && styles.voiceButtonProcessing
+        ]}
+        onPress={handlePress}
+        activeOpacity={0.8}
+      >
+        {getButtonIcon()}
+      </TouchableOpacity>
+
+      {/* Recording controls */}
+      {recordingUri && (
+        <View style={styles.controlsContainer}>
+          <Text style={styles.recordingText}>Recording saved</Text>
+          <View style={styles.controlButtons}>
+            <TouchableOpacity style={styles.controlButton} onPress={playRecording}>
+              <Text style={styles.controlButtonText}>
+                {isPlaying ? 'Pause' : 'Play'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.controlButton} onPress={shareRecording}>
+              <Text style={styles.controlButtonText}>Share</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.controlButton, styles.deleteButton]} 
+              onPress={deleteRecording}
+            >
+              <Text style={[styles.controlButtonText, styles.deleteButtonText]}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      {/* Background waves when active */}
+      {(isListening || recording || (recordingUri && isPlaying)) && (
+        <View style={styles.wavesContainer}>
+          {[...Array(3)].map((_, index) => (
+            <View
               key={index}
               style={[
                 styles.wave,
-                {
-                  borderColor: getButtonColor(),
-                  opacity: 0.3 - index * 0.1,
-                  transform: [
-                    {
-                      scale: pulseAnim.interpolate({
-                        inputRange: [1, 1.05],
-                        outputRange: [1.2 + index * 0.3, 1.4 + index * 0.3],
-                      }),
-                    },
-                  ],
-                },
+                { animationDelay: `${index * 0.2}s` }
               ]}
             />
           ))}
-        </>
+        </View>
       )}
-      
-      <Animated.View
-        style={[
-          styles.buttonContainer,
-          {
-            transform: [
-              { scale: scaleAnim },
-              { scale: pulseAnim },
-            ],
-          },
-        ]}
-      >
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: getButtonColor() }]}
-          onPress={handlePress}
-          activeOpacity={0.8}
-          disabled={isProcessing}
-        >
-          {renderIcon()}
-        </TouchableOpacity>
-      </Animated.View>
     </View>
   );
 }
@@ -159,28 +232,77 @@ export function VoiceButton({ isListening, isProcessing, onPress }: VoiceButtonP
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    justifyContent: 'center',
     position: 'relative',
   },
-  wave: {
-    position: 'absolute',
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    borderWidth: 2,
-  },
-  buttonContainer: {
+  voiceButton: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#667eea',
+    justifyContent: 'center',
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 12,
+    zIndex: 2,
   },
-  button: {
+  voiceButtonActive: {
+    backgroundColor: '#059669',
+    transform: [{ scale: 1.1 }],
+  },
+  voiceButtonProcessing: {
+    backgroundColor: '#F59E0B',
+  },
+  controlsContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  recordingText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#059669',
+    marginBottom: 12,
+  },
+  controlButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  controlButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#2563EB',
+  },
+  controlButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  deleteButton: {
+    backgroundColor: '#DC2626',
+  },
+  deleteButtonText: {
+    color: '#FFFFFF',
+  },
+  wavesContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  wave: {
+    position: 'absolute',
     width: 160,
     height: 160,
     borderRadius: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(102, 126, 234, 0.3)',
+    opacity: 0,
   },
 });

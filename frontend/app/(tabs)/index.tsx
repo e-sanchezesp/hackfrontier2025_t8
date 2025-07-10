@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mic, MicOff, LogOut, Phone } from 'lucide-react-native';
 import { StatusIndicator } from '@/components/StatusIndicator';
@@ -13,6 +13,36 @@ export default function ElderlyPersonScreen() {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const { logout, user } = useAuth();
+
+  const handleEmergencyCall = async () => {
+    try {
+      const url = 'tel:911';
+      const supported = await Linking.canOpenURL(url);
+      
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert('Error', 'Unable to open phone app');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to make emergency call');
+    }
+  };
+
+  const handleFamilyCall = async () => {
+    try {
+      const url = 'tel:6644795098';
+      const supported = await Linking.canOpenURL(url);
+      
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert('Error', 'Unable to open phone app');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to call family');
+    }
+  };
 
   const handleVoicePress = () => {
     if (isListening) {
@@ -111,7 +141,7 @@ export default function ElderlyPersonScreen() {
 
           {/* Quick action buttons */}
           <View style={styles.quickActions}>
-            <TouchableOpacity style={styles.quickActionButton}>
+            <TouchableOpacity style={styles.quickActionButton} onPress={handleFamilyCall}>
               <Phone size={28} color="#FFFFFF" />
               <Text style={styles.quickActionText}>Call Family</Text>
             </TouchableOpacity>
@@ -119,7 +149,7 @@ export default function ElderlyPersonScreen() {
         </ScrollView>
 
         {/* Emergency button - always visible */}
-        <TouchableOpacity style={styles.emergencyButton}>
+        <TouchableOpacity style={styles.emergencyButton} onPress={handleEmergencyCall}>
           <Text style={styles.emergencyText}>🚨</Text>
           <Text style={styles.emergencyLabel}>Emergency</Text>
         </TouchableOpacity>
@@ -137,7 +167,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 120, // Espacio para el botón de emergencia
+    paddingBottom: 120, // Space for emergency button
   },
   header: {
     flexDirection: 'row',

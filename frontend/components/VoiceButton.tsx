@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, Text, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, TouchableOpacity, StyleSheet, Text, Alert, Animated } from 'react-native';
 import { Mic, MicOff, Play, Pause, Square } from 'lucide-react-native';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -22,6 +22,10 @@ export function VoiceButton({
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [recordingUri, setRecordingUri] = useState<string | null>(null);
+  
+  // Animation refs
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const waveAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     return () => {
@@ -30,6 +34,47 @@ export function VoiceButton({
       }
     };
   }, [sound]);
+
+  // Wave animation effect
+  useEffect(() => {
+    if (isListening || recording || (recordingUri && isPlaying)) {
+      // Animación de ondas - smooth loop
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(waveAnim, {
+            toValue: 1,
+            duration: 1200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(waveAnim, {
+            toValue: 0,
+            duration: 1200,
+            useNativeDriver: true,
+          })
+        ])
+      ).start();
+
+      // Fade in
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      // Fade out
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+      waveAnim.setValue(0);
+    }
+
+    return () => {
+      waveAnim.stopAnimation();
+      fadeAnim.stopAnimation();
+    };
+  }, [isListening, recording, recordingUri, isPlaying]);
 
   const startRecording = async () => {
     try {
@@ -174,7 +219,35 @@ export function VoiceButton({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.wrapper}>
+      {/* Animated Waves */}
+      {(isListening || recording || (recordingUri && isPlaying)) && (
+        <View style={styles.wavesWrapper} pointerEvents="none">
+          {[0, 1, 2, 3].map((index) => (
+            <Animated.View
+              key={index}
+              style={[
+                styles.wave,
+                {
+                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                  opacity: fadeAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 0.4 - index * 0.08],
+                  }),
+                  transform: [
+                    {
+                      scale: waveAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.6, 1.3 + index * 0.2],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            />
+          ))}
+        </View>
+      )}
       {/* Main recording button */}
       <TouchableOpacity
         style={[
@@ -187,57 +260,42 @@ export function VoiceButton({
       >
         {getButtonIcon()}
       </TouchableOpacity>
-
-      {/* Recording controls */}
-      {recordingUri && (
-        <View style={styles.controlsContainer}>
-          <Text style={styles.recordingText}>Recording saved</Text>
-          <View style={styles.controlButtons}>
-            <TouchableOpacity style={styles.controlButton} onPress={playRecording}>
-              <Text style={styles.controlButtonText}>
-                {isPlaying ? 'Pause' : 'Play'}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.controlButton} onPress={shareRecording}>
-              <Text style={styles.controlButtonText}>Share</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.controlButton, styles.deleteButton]} 
-              onPress={deleteRecording}
-            >
-              <Text style={[styles.controlButtonText, styles.deleteButtonText]}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-
-      {/* Background waves when active */}
-      {(isListening || recording || (recordingUri && isPlaying)) && (
-        <View style={styles.wavesContainer}>
-          {[...Array(3)].map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.wave,
-                { animationDelay: `${index * 0.2}s` }
-              ]}
-            />
-          ))}
-        </View>
-      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
+    width: 140,
+    height: 140,
     alignItems: 'center',
+    justifyContent: 'center',
     position: 'relative',
   },
+  wavesWrapper: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: 150,
+    height: 150,
+    marginLeft: -75,
+    marginTop: -75,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 0,
+  },
+  wave: {
+    position: 'absolute',
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    borderWidth: 2,
+  },
   voiceButton: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    zIndex: 1,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
@@ -246,7 +304,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 12,
-    zIndex: 2,
   },
   voiceButtonActive: {
     backgroundColor: '#10B981',
@@ -254,55 +311,5 @@ const styles = StyleSheet.create({
   },
   voiceButtonProcessing: {
     backgroundColor: '#F97316',
-  },
-  controlsContainer: {
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  recordingText: {
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
-    color: '#10B981',
-    marginBottom: 12,
-  },
-  controlButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  controlButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  controlButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
-  },
-  deleteButton: {
-    backgroundColor: '#DC2626',
-  },
-  deleteButtonText: {
-    color: '#FFFFFF',
-  },
-  wavesContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1,
-  },
-  wave: {
-    position: 'absolute',
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    opacity: 0,
   },
 });

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mic, MicOff, LogOut, Phone, Heart, AlertTriangle } from 'lucide-react-native';
-import { StatusIndicator } from '@/components/StatusIndicator';
+
 import { VoiceButton } from '@/components/VoiceButton';
 import { RecordingsList } from '@/components/RecordingsList';
 import { useAuth } from '@/contexts/AuthContext';
@@ -133,12 +133,6 @@ export default function ElderlyPersonScreen() {
 
           {/* Main content */}
           <View style={styles.mainContent}>
-            {/* Visual status indicator */}
-            <StatusIndicator 
-              isActive={isListening || isProcessing}
-              type={isProcessing ? 'processing' : isListening ? 'listening' : 'ready'}
-            />
-            
             {/* Main voice button */}
             <VoiceButton 
               isListening={isListening}
@@ -149,10 +143,7 @@ export default function ElderlyPersonScreen() {
             
             {/* Status text */}
             <View style={styles.statusContainer}>
-              <Text style={[styles.statusText, { color: getStatusColor() }]}>
-                {getStatusText()}
-              </Text>
-              
+              <Text style={[styles.statusText, { color: getStatusColor() }]}>{getStatusText()}</Text>
               {/* Additional instructions */}
               {!isListening && !isProcessing && (
                 <View style={styles.instructionsContainer}>
@@ -259,6 +250,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 40,
     paddingHorizontal: 20,
+    width: '100%',
   },
   statusText: {
     fontSize: 24,

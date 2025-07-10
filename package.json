@@ -22,7 +22,17 @@
     "frontend",
     "backend"
   ],
-  "keywords": ["monorepo", "react-native", "express", "api"],
+  "keywords": [
+    "monorepo",
+    "react-native",
+    "express",
+    "api"
+  ],
   "author": "Your Name",
-  "license": "MIT"
-} 
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "pg": "^8.16.3"
+  }
+}

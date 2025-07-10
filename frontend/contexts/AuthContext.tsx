@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { router } from 'expo-router';
 
-export type UserRole = 'cuidador' | 'adulto_mayor';
+export type UserRole = 'caregiver' | 'elderly_person';
 
 interface User {
   id: string;
@@ -25,11 +25,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simular verificación de sesión existente
+    // Simulate existing session verification
     const checkAuthState = async () => {
       try {
-        // Aquí normalmente verificarías un token guardado
-        // Por ahora simulamos que no hay sesión activa
+        // Here you would normally verify a saved token
+        // For now we simulate that there's no active session
         setIsLoading(false);
       } catch (error) {
         setIsLoading(false);
@@ -43,14 +43,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     
     try {
-      // Simulación de autenticación
-      // En una app real, aquí harías la llamada a tu API
+      // Authentication simulation
+      // In a real app, you would make a call to your API here
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Simulamos usuarios de prueba
+      // Mock test users
       const mockUsers = {
-        'cuidador@test.com': { name: 'María González', role: 'cuidador' as UserRole },
-        'adulto@test.com': { name: 'Roberto Martínez', role: 'adulto_mayor' as UserRole },
+        'caregiver@test.com': { name: 'Maria Gonzalez', role: 'caregiver' as UserRole },
+        'elderly@test.com': { name: 'Robert Martinez', role: 'elderly_person' as UserRole },
       };
       
       const mockUser = mockUsers[email as keyof typeof mockUsers];
@@ -66,11 +66,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(userData);
         setIsLoading(false);
         
-        // Redirigir según el rol
-        if (role === 'cuidador') {
+        // Redirect based on role
+        if (role === 'caregiver') {
           router.replace('/(tabs)/cuidador');
         } else {
-          router.replace('/(tabs)/');
+          router.replace('/(tabs)');
         }
         
         return true;

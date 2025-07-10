@@ -32,15 +32,15 @@ export default function LoginScreen() {
     const newErrors: typeof errors = {};
     
     if (!email.trim()) {
-      newErrors.email = 'El correo electrónico es requerido';
+      newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Ingresa un correo electrónico válido';
+      newErrors.email = 'Please enter a valid email address';
     }
     
     if (!password.trim()) {
-      newErrors.password = 'La contraseña es requerida';
+      newErrors.password = 'Password is required';
     } else if (password.length < 6) {
-      newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
+      newErrors.password = 'Password must be at least 6 characters long';
     }
     
     setErrors(newErrors);
@@ -57,26 +57,26 @@ export default function LoginScreen() {
       
       if (!success) {
         setErrors({ 
-          general: 'Credenciales incorrectas o rol no autorizado. Intenta con:\n• cuidador@test.com / 123456\n• adulto@test.com / 123456' 
+          general: 'Incorrect credentials or unauthorized role. Try:\n• caregiver@test.com / 123456\n• elderly@test.com / 123456' 
         });
       }
     } catch (error) {
-      setErrors({ general: 'Error de conexión. Intenta nuevamente.' });
+      setErrors({ general: 'Connection error. Please try again.' });
     }
   };
 
   const getRoleInfo = () => {
-    if (role === 'cuidador') {
+    if (role === 'caregiver') {
       return {
         icon: <Users size={32} color="#667eea" strokeWidth={2} />,
-        title: 'Cuidador',
-        description: 'Accede a tu panel de monitoreo y gestión'
+        title: 'Caregiver',
+        description: 'Access your monitoring and management panel'
       };
     } else {
       return {
         icon: <Heart size={32} color="#667eea" strokeWidth={2} />,
-        title: 'Persona Adulta Mayor',
-        description: 'Accede a tu asistente personal'
+        title: 'Elderly Person',
+        description: 'Access your personal assistant'
       };
     }
   };
@@ -123,7 +123,7 @@ export default function LoginScreen() {
 
             {/* Login Form */}
             <View style={styles.formContainer}>
-              <Text style={styles.formTitle}>Iniciar Sesión</Text>
+              <Text style={styles.formTitle}>Sign In</Text>
               
               {errors.general && (
                 <View style={styles.errorContainer}>
@@ -133,7 +133,7 @@ export default function LoginScreen() {
 
               {/* Email Input */}
               <View style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>Correo Electrónico</Text>
+                <Text style={styles.inputLabel}>Email Address</Text>
                 <TextInput
                   style={[styles.input, errors.email && styles.inputError]}
                   value={email}
@@ -141,7 +141,7 @@ export default function LoginScreen() {
                     setEmail(text);
                     if (errors.email) setErrors(prev => ({ ...prev, email: undefined }));
                   }}
-                  placeholder="ejemplo@correo.com"
+                  placeholder="example@email.com"
                   placeholderTextColor="#9CA3AF"
                   keyboardType="email-address"
                   autoCapitalize="none"
@@ -154,7 +154,7 @@ export default function LoginScreen() {
 
               {/* Password Input */}
               <View style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>Contraseña</Text>
+                <Text style={styles.inputLabel}>Password</Text>
                 <View style={styles.passwordContainer}>
                   <TextInput
                     style={[styles.passwordInput, errors.password && styles.inputError]}
@@ -163,7 +163,7 @@ export default function LoginScreen() {
                       setPassword(text);
                       if (errors.password) setErrors(prev => ({ ...prev, password: undefined }));
                     }}
-                    placeholder="Ingresa tu contraseña"
+                    placeholder="Enter your password"
                     placeholderTextColor="#9CA3AF"
                     secureTextEntry={!showPassword}
                     autoCapitalize="none"
@@ -194,21 +194,21 @@ export default function LoginScreen() {
                 {isLoading ? (
                   <View style={styles.loadingContainer}>
                     <Loader size={20} color="#FFFFFF" />
-                    <Text style={styles.loginButtonText}>Iniciando sesión...</Text>
+                    <Text style={styles.loginButtonText}>Signing in...</Text>
                   </View>
                 ) : (
-                  <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+                  <Text style={styles.loginButtonText}>Sign In</Text>
                 )}
               </TouchableOpacity>
 
               {/* Demo Credentials */}
               <View style={styles.demoContainer}>
-                <Text style={styles.demoTitle}>Credenciales de prueba:</Text>
+                <Text style={styles.demoTitle}>Test credentials:</Text>
                 <Text style={styles.demoText}>
-                  Cuidador: cuidador@test.com / 123456
+                  Caregiver: caregiver@test.com / 123456
                 </Text>
                 <Text style={styles.demoText}>
-                  Adulto Mayor: adulto@test.com / 123456
+                  Elderly Person: elderly@test.com / 123456
                 </Text>
               </View>
             </View>

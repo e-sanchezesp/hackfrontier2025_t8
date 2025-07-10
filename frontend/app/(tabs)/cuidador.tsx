@@ -6,104 +6,104 @@ import { ReportCard } from '@/components/ReportCard';
 import { AlarmCard } from '@/components/AlarmCard';
 import { Header } from '@/components/Header';
 
-// Datos de ejemplo
-const reportes = [
+// Sample data
+const reports = [
   {
     id: 1,
-    fecha: '2024-01-15',
-    salud: { estado: 'Bueno', color: '#059669' },
-    emociones: { estado: 'Tranquilo', color: '#2563EB' },
-    resumen: 'Día estable, medicamentos tomados correctamente',
+    date: '2024-01-15',
+    health: { status: 'Good', color: '#059669' },
+    emotions: { status: 'Calm', color: '#2563EB' },
+    summary: 'Stable day, medications taken correctly',
   },
   {
     id: 2,
-    fecha: '2024-01-14',
-    salud: { estado: 'Regular', color: '#F59E0B' },
-    emociones: { estado: 'Ansioso', color: '#F59E0B' },
-    resumen: 'Presión arterial ligeramente elevada, expresó preocupación',
+    date: '2024-01-14',
+    health: { status: 'Regular', color: '#F59E0B' },
+    emotions: { status: 'Anxious', color: '#F59E0B' },
+    summary: 'Slightly elevated blood pressure, expressed concern',
   },
   {
     id: 3,
-    fecha: '2024-01-13',
-    salud: { estado: 'Bueno', color: '#059669' },
-    emociones: { estado: 'Feliz', color: '#059669' },
-    resumen: 'Excelente día, conversación fluida con familiares',
+    date: '2024-01-13',
+    health: { status: 'Good', color: '#059669' },
+    emotions: { status: 'Happy', color: '#059669' },
+    summary: 'Excellent day, fluid conversation with family',
   },
 ];
 
-const alarmas = [
+const alarms = [
   {
     id: 1,
-    titulo: 'Medicamento matutino',
-    hora: '08:00',
-    frecuencia: 'Diario',
-    activa: true,
+    title: 'Morning medication',
+    time: '08:00',
+    frequency: 'Daily',
+    active: true,
   },
   {
     id: 2,
-    titulo: 'Llamada familiar',
-    hora: '18:00',
-    frecuencia: 'Lunes, Miércoles, Viernes',
-    activa: true,
+    title: 'Family call',
+    time: '18:00',
+    frequency: 'Monday, Wednesday, Friday',
+    active: true,
   },
   {
     id: 3,
-    titulo: 'Ejercicio suave',
-    hora: '15:00',
-    frecuencia: 'Diario',
-    activa: false,
+    title: 'Light exercise',
+    time: '15:00',
+    frequency: 'Daily',
+    active: false,
   },
 ];
 
-export default function CuidadorScreen() {
-  const [selectedTab, setSelectedTab] = useState<'reportes' | 'alarmas'>('reportes');
+export default function CaregiverScreen() {
+  const [selectedTab, setSelectedTab] = useState<'reports' | 'alarms'>('reports');
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Panel de Cuidador" />
+      <Header title="Caregiver Panel" />
       
       {/* Tabs */}
       <View style={styles.tabsContainer}>
         <TouchableOpacity
-          style={[styles.tab, selectedTab === 'reportes' && styles.activeTab]}
-          onPress={() => setSelectedTab('reportes')}
+          style={[styles.tab, selectedTab === 'reports' && styles.activeTab]}
+          onPress={() => setSelectedTab('reports')}
         >
-          <Calendar size={20} color={selectedTab === 'reportes' ? '#2563EB' : '#6B7280'} />
-          <Text style={[styles.tabText, selectedTab === 'reportes' && styles.activeTabText]}>
-            Reportes
+          <Calendar size={20} color={selectedTab === 'reports' ? '#2563EB' : '#6B7280'} />
+          <Text style={[styles.tabText, selectedTab === 'reports' && styles.activeTabText]}>
+            Reports
           </Text>
         </TouchableOpacity>
         
         <TouchableOpacity
-          style={[styles.tab, selectedTab === 'alarmas' && styles.activeTab]}
-          onPress={() => setSelectedTab('alarmas')}
+          style={[styles.tab, selectedTab === 'alarms' && styles.activeTab]}
+          onPress={() => setSelectedTab('alarms')}
         >
-          <Bell size={20} color={selectedTab === 'alarmas' ? '#2563EB' : '#6B7280'} />
-          <Text style={[styles.tabText, selectedTab === 'alarmas' && styles.activeTabText]}>
-            Alarmas
+          <Bell size={20} color={selectedTab === 'alarms' ? '#2563EB' : '#6B7280'} />
+          <Text style={[styles.tabText, selectedTab === 'alarms' && styles.activeTabText]}>
+            Alarms
           </Text>
         </TouchableOpacity>
       </View>
 
-      {/* Contenido */}
+      {/* Content */}
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {selectedTab === 'reportes' ? (
+        {selectedTab === 'reports' ? (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Reportes Diarios</Text>
-            {reportes.map((reporte) => (
-              <ReportCard key={reporte.id} reporte={reporte} />
+            <Text style={styles.sectionTitle}>Daily Reports</Text>
+            {reports.map((report) => (
+              <ReportCard key={report.id} report={report} />
             ))}
           </View>
         ) : (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Recordatorios</Text>
+              <Text style={styles.sectionTitle}>Reminders</Text>
               <TouchableOpacity style={styles.addButton}>
                 <Plus size={20} color="#FFFFFF" />
               </TouchableOpacity>
             </View>
-            {alarmas.map((alarma) => (
-              <AlarmCard key={alarma.id} alarma={alarma} />
+            {alarms.map((alarm) => (
+              <AlarmCard key={alarm.id} alarm={alarm} />
             ))}
           </View>
         )}

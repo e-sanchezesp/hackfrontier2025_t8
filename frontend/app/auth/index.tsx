@@ -8,7 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 const { width, height } = Dimensions.get('window');
 
 export default function RoleSelectionScreen() {
-  const handleRoleSelection = (role: 'cuidador' | 'adulto_mayor') => {
+  const handleRoleSelection = (role: 'caregiver' | 'elderly_person') => {
     router.push({
       pathname: '/auth/login',
       params: { role }
@@ -26,60 +26,60 @@ export default function RoleSelectionScreen() {
           showsVerticalScrollIndicator={false}
           bounces={false}
         >
-          {/* Logo y título */}
+          {/* Logo and title */}
           <View style={styles.header}>
             <View style={styles.logoContainer}>
               <Heart size={48} color="#FFFFFF" strokeWidth={2} />
             </View>
             <Text style={styles.title}>CUIDA+</Text>
             <Text style={styles.subtitle}>
-              Cuidado y bienestar para personas adultas mayores
+              Care and wellness for elderly people
             </Text>
           </View>
 
-          {/* Pregunta principal */}
+          {/* Main question */}
           <View style={styles.questionContainer}>
-            <Text style={styles.question}>¿Quién eres?</Text>
+            <Text style={styles.question}>Who are you?</Text>
             <Text style={styles.questionSubtext}>
-              Selecciona tu rol para continuar
+              Select your role to continue
             </Text>
           </View>
 
-          {/* Botones de selección de rol */}
+          {/* Role selection buttons */}
           <View style={styles.rolesContainer}>
             <TouchableOpacity
               style={styles.roleButton}
-              onPress={() => handleRoleSelection('adulto_mayor')}
+              onPress={() => handleRoleSelection('elderly_person')}
               activeOpacity={0.8}
             >
               <View style={styles.roleIconContainer}>
                 <Heart size={32} color="#667eea" strokeWidth={2} />
               </View>
-              <Text style={styles.roleTitle}>Persona Adulta Mayor</Text>
+              <Text style={styles.roleTitle}>Elderly Person</Text>
               <Text style={styles.roleDescription}>
-                Accede a tu asistente personal de cuidado y bienestar
+                Access your personal care and wellness assistant
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.roleButton}
-              onPress={() => handleRoleSelection('cuidador')}
+              onPress={() => handleRoleSelection('caregiver')}
               activeOpacity={0.8}
             >
               <View style={styles.roleIconContainer}>
                 <Users size={32} color="#667eea" strokeWidth={2} />
               </View>
-              <Text style={styles.roleTitle}>Cuidador</Text>
+              <Text style={styles.roleTitle}>Caregiver</Text>
               <Text style={styles.roleDescription}>
-                Monitorea y gestiona el cuidado de personas adultas mayores
+                Monitor and manage care for elderly people
               </Text>
             </TouchableOpacity>
           </View>
 
-          {/* Información adicional */}
+          {/* Additional information */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>
-              ¿No tienes cuenta? Contacta con tu administrador
+              Don't have an account? Contact your administrator
             </Text>
           </View>
         </ScrollView>

@@ -2,20 +2,20 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 import { Clock, Repeat } from 'lucide-react-native';
 
-interface Alarma {
+interface Alarm {
   id: number;
-  titulo: string;
-  hora: string;
-  frecuencia: string;
-  activa: boolean;
+  title: string;
+  time: string;
+  frequency: string;
+  active: boolean;
 }
 
 interface AlarmCardProps {
-  alarma: Alarma;
+  alarm: Alarm;
 }
 
-export function AlarmCard({ alarma }: AlarmCardProps) {
-  const [isEnabled, setIsEnabled] = React.useState(alarma.activa);
+export function AlarmCard({ alarm }: AlarmCardProps) {
+  const [isEnabled, setIsEnabled] = React.useState(alarm.active);
 
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
@@ -27,11 +27,11 @@ export function AlarmCard({ alarma }: AlarmCardProps) {
         </View>
         
         <View style={styles.info}>
-          <Text style={styles.title}>{alarma.titulo}</Text>
-          <Text style={styles.time}>{alarma.hora}</Text>
+          <Text style={styles.title}>{alarm.title}</Text>
+          <Text style={styles.time}>{alarm.time}</Text>
           <View style={styles.frequencyContainer}>
             <Repeat size={12} color="#6B7280" />
-            <Text style={styles.frequency}>{alarma.frecuencia}</Text>
+            <Text style={styles.frequency}>{alarm.frequency}</Text>
           </View>
         </View>
         

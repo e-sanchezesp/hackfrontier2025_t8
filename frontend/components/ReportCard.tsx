@@ -2,22 +2,22 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Calendar, Heart, Brain, ChevronRight } from 'lucide-react-native';
 
-interface Reporte {
+interface Report {
   id: number;
-  fecha: string;
-  salud: { estado: string; color: string };
-  emociones: { estado: string; color: string };
-  resumen: string;
+  date: string;
+  health: { status: string; color: string };
+  emotions: { status: string; color: string };
+  summary: string;
 }
 
 interface ReportCardProps {
-  reporte: Reporte;
+  report: Report;
 }
 
-export function ReportCard({ reporte }: ReportCardProps) {
-  const formatearFecha = (fecha: string) => {
-    const date = new Date(fecha);
-    return date.toLocaleDateString('es-ES', {
+export function ReportCard({ report }: ReportCardProps) {
+  const formatDate = (date: string) => {
+    const dateObj = new Date(date);
+    return dateObj.toLocaleDateString('en-US', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -29,7 +29,7 @@ export function ReportCard({ reporte }: ReportCardProps) {
       <View style={styles.header}>
         <View style={styles.dateContainer}>
           <Calendar size={16} color="#6B7280" />
-          <Text style={styles.date}>{formatearFecha(reporte.fecha)}</Text>
+          <Text style={styles.date}>{formatDate(report.date)}</Text>
         </View>
         <ChevronRight size={20} color="#9CA3AF" />
       </View>
@@ -37,30 +37,30 @@ export function ReportCard({ reporte }: ReportCardProps) {
       <View style={styles.statusContainer}>
         <View style={styles.statusItem}>
           <View style={styles.statusIcon}>
-            <Heart size={16} color={reporte.salud.color} />
+            <Heart size={16} color={report.health.color} />
           </View>
           <View>
-            <Text style={styles.statusLabel}>Salud</Text>
-            <Text style={[styles.statusValue, { color: reporte.salud.color }]}>
-              {reporte.salud.estado}
+            <Text style={styles.statusLabel}>Health</Text>
+            <Text style={[styles.statusValue, { color: report.health.color }]}>
+              {report.health.status}
             </Text>
           </View>
         </View>
         
         <View style={styles.statusItem}>
           <View style={styles.statusIcon}>
-            <Brain size={16} color={reporte.emociones.color} />
+            <Brain size={16} color={report.emotions.color} />
           </View>
           <View>
-            <Text style={styles.statusLabel}>Emociones</Text>
-            <Text style={[styles.statusValue, { color: reporte.emociones.color }]}>
-              {reporte.emociones.estado}
+            <Text style={styles.statusLabel}>Emotions</Text>
+            <Text style={[styles.statusValue, { color: report.emotions.color }]}>
+              {report.emotions.status}
             </Text>
           </View>
         </View>
       </View>
       
-      <Text style={styles.resumen}>{reporte.resumen}</Text>
+      <Text style={styles.summary}>{report.summary}</Text>
     </TouchableOpacity>
   );
 }
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  resumen: {
+  summary: {
     fontSize: 14,
     color: '#4B5563',
     lineHeight: 20,

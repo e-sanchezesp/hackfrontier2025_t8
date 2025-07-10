@@ -9,31 +9,31 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
-export default function AdultoMayorScreen() {
+export default function ElderlyPersonScreen() {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const { logout, user } = useAuth();
 
   const handleVoicePress = () => {
     if (isListening) {
-      // Detener grabación
+      // Stop recording
       setIsListening(false);
       setIsProcessing(true);
       
-      // Simular procesamiento
+      // Simulate processing
       setTimeout(() => {
         setIsProcessing(false);
       }, 2000);
     } else {
-      // Iniciar grabación
+      // Start recording
       setIsListening(true);
     }
   };
 
   const getStatusText = () => {
-    if (isProcessing) return 'Procesando tu mensaje...';
-    if (isListening) return 'Te estoy escuchando...';
-    return 'Toca el botón para hablar conmigo';
+    if (isProcessing) return 'Processing your message...';
+    if (isListening) return 'I am listening to you...';
+    return 'Tap the button to talk to me';
   };
 
   const getStatusColor = () => {
@@ -44,9 +44,9 @@ export default function AdultoMayorScreen() {
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Buenos días';
-    if (hour < 18) return 'Buenas tardes';
-    return 'Buenas noches';
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
   };
 
   return (
@@ -60,7 +60,7 @@ export default function AdultoMayorScreen() {
           showsVerticalScrollIndicator={false}
           bounces={false}
         >
-          {/* Header con saludo y logout */}
+          {/* Header with greeting and logout */}
           <View style={styles.header}>
             <View style={styles.greetingContainer}>
               <Text style={styles.greeting}>{getGreeting()}</Text>
@@ -71,57 +71,57 @@ export default function AdultoMayorScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Contenido principal */}
+          {/* Main content */}
           <View style={styles.mainContent}>
-            {/* Indicador de estado visual */}
+            {/* Visual status indicator */}
             <StatusIndicator 
               isActive={isListening || isProcessing}
               type={isProcessing ? 'processing' : isListening ? 'listening' : 'ready'}
             />
             
-            {/* Botón principal de voz */}
+            {/* Main voice button */}
             <VoiceButton 
               isListening={isListening}
               isProcessing={isProcessing}
               onPress={handleVoicePress}
             />
             
-            {/* Texto de estado */}
+            {/* Status text */}
             <View style={styles.statusContainer}>
               <Text style={[styles.statusText, { color: getStatusColor() }]}>
                 {getStatusText()}
               </Text>
               
-              {/* Instrucciones adicionales */}
+              {/* Additional instructions */}
               {!isListening && !isProcessing && (
                 <View style={styles.instructionsContainer}>
                   <Text style={styles.instructionText}>
-                    Puedes preguntarme sobre:
+                    You can ask me about:
                   </Text>
                   <View style={styles.suggestionsList}>
-                    <Text style={styles.suggestionItem}>• Tu salud y medicamentos</Text>
-                    <Text style={styles.suggestionItem}>• Cómo te sientes hoy</Text>
-                    <Text style={styles.suggestionItem}>• Recordatorios importantes</Text>
-                    <Text style={styles.suggestionItem}>• Llamar a un familiar</Text>
+                    <Text style={styles.suggestionItem}>• Your health and medications</Text>
+                    <Text style={styles.suggestionItem}>• How you feel today</Text>
+                    <Text style={styles.suggestionItem}>• Important reminders</Text>
+                    <Text style={styles.suggestionItem}>• Calling a family member</Text>
                   </View>
                 </View>
               )}
             </View>
           </View>
 
-          {/* Botones de acción rápida */}
+          {/* Quick action buttons */}
           <View style={styles.quickActions}>
             <TouchableOpacity style={styles.quickActionButton}>
               <Phone size={28} color="#FFFFFF" />
-              <Text style={styles.quickActionText}>Llamar Familia</Text>
+              <Text style={styles.quickActionText}>Call Family</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
 
-        {/* Botón de emergencia - siempre visible */}
+        {/* Emergency button - always visible */}
         <TouchableOpacity style={styles.emergencyButton}>
           <Text style={styles.emergencyText}>🚨</Text>
-          <Text style={styles.emergencyLabel}>Emergencia</Text>
+          <Text style={styles.emergencyLabel}>Emergency</Text>
         </TouchableOpacity>
       </LinearGradient>
     </SafeAreaView>
